@@ -1,0 +1,65 @@
+from .base import *
+
+SECRET_KEY = '{{ seeder_secret }}'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = {{ seeder_debug }}
+TEMPLATE_DEBUG = {{ seeder_template }}
+THUMBNAIL_DEBUG = {{ seeder_thumbnail }}
+
+ALLOWED_HOSTS = ['{{ seeder_allowed }}']
+
+# Database
+# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+# since we use special PostgresSQL fields we cannot simply use any db.
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '{{ seeder_db.db | default("wadmin") }}',
+        'USER': '{{ seeder_db.user | default("wadmin") }}',
+        'PASSWORD': '{{ seeder_db.pass | default("wadmin") }}',
+        'HOST': '{{ seeder_db.host | default("127.0.0.1") }}',
+    },
+    'legacy_seeder': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '{{ wadmin.db }}',
+        'USER': '{{ wadmin.user }}',
+        'PASSWORD': '{{ wadmin.pass }}',
+        'HOST': '{{ wadmin.host | default("127.0.0.1") }}',
+    }
+}
+
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'elasticstack.backends.ConfigurableElasticSearchEngine',
+        'URL': 'http://{{ seeder_elastic_host }}/',
+        'INDEX_NAME': '{{ seeder_elastic_index}}',
+    },
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '{{ seeder_memcached }}',
+    }
+}
+
+
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'webarchiv@nkp.cz'
+SERVER_EMAIL= 'webarchiv@nkp.cz' 
+
+LEGACY_DB_CONNECTED = {{ wadmin_db_connected }}
+
+MANET_URL = 'http://{{ seeder_manet_host }}/'
+WAKAT_URL = '{{ wakat_url }}'
+
+RAVEN_CONFIG = {
+    'dsn': '{{ seeder_sentry }}',
+}
