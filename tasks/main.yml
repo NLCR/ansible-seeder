@@ -88,6 +88,7 @@
   command: '{{ seeder_virtualenv }}/bin/tx push -t -s'
   args:
     chdir: '{{ seeder_home }}/Seeder'
+  ignore_errors: True # Ignoring errors until issue is resolved: Exception: Only maintainers are allowed to update the source file
   tags: update
 
 - name: Django add superusers
