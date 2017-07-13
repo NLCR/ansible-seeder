@@ -5,7 +5,9 @@
   tags: packages
 
 - name: YUM requirements
-  yum: name="{{ item }}"
+  yum:
+    name: "{{ item }}"
+    state: present
   with_items:
   - python-virtualenv # Seeder
   - python-devel # Seeder: psycopg2
