@@ -64,6 +64,7 @@
 
 - name: Pull messages from Transifex server
   command: '{{ seeder_virtualenv }}/bin/tx pull -a'
+  chdir: '{{ seeder_home }}/Seeder'
   tags: update
 
 - name: Django manage
@@ -84,8 +85,8 @@
 
 - name: Push messages to Transifex server
   command: '{{ seeder_virtualenv }}/bin/tx push -t -s'
+  chdir: '{{ seeder_home }}/Seeder'
   tags: update
-  ignore_errors: True
 
 - name: Django add superusers
   django_manage:
