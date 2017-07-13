@@ -7,7 +7,7 @@
 - name: YUM requirements
   yum:
     name: "{{ item }}"
-    state: present
+    state: "{{ yum_state | default('present') }}"
   with_items:
   - python-virtualenv # Seeder
   - python-devel # Seeder: psycopg2
