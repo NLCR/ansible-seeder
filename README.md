@@ -41,9 +41,9 @@ wakat_url: 'kat.webarchiv.cz'
 Dependencies
 ------------
 
-NLCR.elasticsearch, NLCR.postgresql, NLCR.supervisor
+[NLCR.elasticsearch](https://github.com/NLCR/ansible-elasticsearch), [NLCR.postgresql](https://github.com/NLCR/ansible-postgresql), [NLCR.supervisor](https://github.com/NLCR/ansible-supervisor)
 
-and optional: NLCR.wakat, NLCR.nginx, NLCR.mariadb. 
+and optional: [NLCR.wakat](https://github.com/NLCR/ansible-wakat), [NLCR.nginx](https://github.com/NLCR/ansible-nginx), [NLCR.mariadb](https://github.com/NLCR/ansible-mariadb). 
 
 Example Playbook
 ----------------
