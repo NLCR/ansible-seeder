@@ -1,12 +1,7 @@
 NLCR.Seeder
 =========
 
-Simple role for deploying Seeder to CentOS server. Bit dirty now;-)
-
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Simple role for deploying [Seeder](https://github.com/WebarchivCZ/Seeder) to CentOS server.
 
 Role Variables
 --------------
@@ -52,9 +47,6 @@ and optional: NLCR.wakat, NLCR.nginx, NLCR.mariadb.
 
 Example Playbook
 ----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
 ```
  - name: Seeder imports old data from legacy WAdmin DB.
    hosts: seeder
@@ -122,12 +114,3 @@ Including an example of how to use your role (for instance, with variables passe
          port: 10001
        tags: seeder
 ```
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
