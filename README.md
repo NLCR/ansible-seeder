@@ -1,7 +1,7 @@
 NLCR.Seeder
 =========
 
-Simple role for deploying [Seeder](https://github.com/WebarchivCZ/Seeder) to CentOS server.
+Simple role for deploying [Seeder](https://github.com/WebarchivCZ/Seeder) to CentOS server. Quick and dirty, shoudl be bit rethought.
 
 Role Variables
 --------------
@@ -43,7 +43,7 @@ Dependencies
 
 [NLCR.elasticsearch](https://github.com/NLCR/ansible-elasticsearch), [NLCR.postgresql](https://github.com/NLCR/ansible-postgresql), [NLCR.supervisor](https://github.com/NLCR/ansible-supervisor)
 
-and optional: [NLCR.wakat](https://github.com/NLCR/ansible-wakat), [NLCR.nginx](https://github.com/NLCR/ansible-nginx), [NLCR.mariadb](https://github.com/NLCR/ansible-mariadb). 
+and optional: [NLCR.wakat](https://github.com/NLCR/ansible-wakat), [NLCR.nginx](https://github.com/NLCR/ansible-nginx), [NLCR.mariadb](https://github.com/NLCR/ansible-mariadb), [NLCR.sentry](https://github.com/NLCR/ansible-sentry)
 
 Example Playbook
 ----------------
