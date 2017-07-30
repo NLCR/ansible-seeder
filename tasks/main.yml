@@ -64,12 +64,6 @@
   with_dict: '{{ admins }}'
   tags: permissions
 
-- name: Pull messages from Transifex server
-  command: '{{ seeder_virtualenv }}/bin/tx pull -a'
-  args:
-    chdir: '{{ seeder_home }}/Seeder'
-  tags: update
-
 - name: Django manage
   django_manage:
     app_path: "{{ seeder_home }}/Seeder"
@@ -86,13 +80,6 @@
   tags: update
   become_user: "{{ seeder_user }}"
 
-- name: Push messages to Transifex server
-  command: '{{ seeder_virtualenv }}/bin/tx push -t -s'
-  args:
-    chdir: '{{ seeder_home }}/Seeder'
-  ignore_errors: True # Ignoring errors until issue is resolved: Exception: Only maintainers are allowed to update the source file
-  tags: update
-
 - name: Django add superusers
   django_manage:
     app_path: "{{ seeder_home }}/Seeder"
@@ -108,15 +95,6 @@
     domain: httpd_t
     permissive: True
   tags: selinux
-
-- name: "at 7:40, 12:40, 16:40, 20:40, 23:40 transifex client pulls tranlastion and manage.py runs compilemessages"
-  cron:
-    name: transiflex pull translation and manage compilemessages
-    job: "cd {{ seeder_home }}/Seeder && {{ seeder_virtualenv }}/bin/tx pull -a && {{ seeder_virtualenv }}/bin/python {{ seeder_home }}/Seeder/manage.py compilemessages"
-    hour: "7,12,16,20,23"
-    minute: 40
-  tags: translation
-  become_user: "{{ seeder_user }}"
 
 - name: "uwsgi reloads at 7:45, 12:45, 16:45, 20:45, 23:45"
   cron:
