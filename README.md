@@ -1,38 +1,116 @@
-Role Name
+NLCR.Seeder
 =========
 
-A brief description of the role goes here.
-
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Simple role for deploying [Seeder](https://github.com/WebarchivCZ/Seeder) to CentOS server. Quick and dirty, shoudl be bit rethought.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```
+---
+# Seeder settings
+seeder_home: /opt/Seeder
+seeder_virtualenv: /opt/virtualenv/seeder
+seeder_user: uwsgi
+seeder_group: "{{ seeder_user }}"
+seeder_logs: /var/log/seeder
 
+# local_settings.py
+seeder_secret: sdfvsdfvsdfvsdfv
+seeder_debug: True
+seeder_template: "{{ seeder_debug }}"
+seeder_thumbnail: "{{ seeder_debug }}"
+seeder_allowed: "{{ ansible_hostname }}', '{{ ansible_all_ipv4_addresses | join(\"', '\") }}"
+seeder_sentry: 'http://7b446e212dcb48b2ab68f44b91d268e8:3baf62247b0145b4a8a2c095486682a8@10.3.0.20:9000/4'
+
+# seeder postgresql
+seeder_db_name: seeder
+seeder_db_user: seeder
+seeder_db_pass: seeder
+seeder_db_host: 127.0.0.1
+# legacy db
+wadmin_db_connected: False
+# others
+seeder_elastic_host: "localhost:9200"
+seeder_elastic_index: haystack
+seeder_memcached: "localhost:11211"
+seeder_manet_host: "localhost:8891"
+wakat_url: 'kat.webarchiv.cz'
+...
+```
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+[NLCR.elasticsearch](https://github.com/NLCR/ansible-elasticsearch), [NLCR.postgresql](https://github.com/NLCR/ansible-postgresql), [NLCR.supervisor](https://github.com/NLCR/ansible-supervisor)
+
+and optional: [NLCR.wakat](https://github.com/NLCR/ansible-wakat), [NLCR.nginx](https://github.com/NLCR/ansible-nginx), [NLCR.mariadb](https://github.com/NLCR/ansible-mariadb), [NLCR.sentry](https://github.com/NLCR/ansible-sentry)
 
 Example Playbook
 ----------------
+```
+ - name: Seeder imports old data from legacy WAdmin DB.
+   hosts: seeder
+   roles:
+     - role: NLCR.mariadb
+       mariadb:
+         name: '{{ wadmin.db }}'
+         import: wadmin-2017-02-01.sql.bz2
+         user: '{{ wadmin.user }}'
+         pass: '{{ wadmin.pass }}'
+       tags: wadmin
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+ - name: Web archiving catalogization assistence as web service
+   hosts: seeder
+   roles:
+     - role: NLCR.wakat
+       wa_kat:
+         path: /mnt/raid1/git/WA-KAT
+         release: v1.1.8
+         port: 10001
+       tags: wa-kat
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+ - name: Seeder wants Elasticsearch with analysis_icu.
+   hosts: seeder
+   roles:
+     - role: NLCR.elasticsearch
+       elastic:
+         analysis_icu: True
+       tags: elastic
 
-License
--------
+ - name: Nginx server
+   hosts: seeder
+   roles:
+     - role: NLCR.nginx
+       tags: nginx
 
-BSD
+ - name: PostgreSQL database for Seeder
+   hosts: seeder
+   roles:
+     - role: NLCR.postgresql
+       postgresql:
+         - user: '{{ seeder_db.user }}'
+           pass: '{{ seeder_db.pass }}'
+           db: '{{ seeder_db.db }}'
+       tags: postgresql
 
-Author Information
-------------------
+ - name: Supervisor for Seeder
+   hosts: seeder
+   roles:
+     - role: NLCR.supervisor
+       tags: supervisord
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+ - name: Seeder curation tool
+   hosts: seeder
+   roles:
+     - role: NLCR.seeder
+       seeder_home: /mnt/raid1/git/Seeder
+       seeder_hostname: war.webarchiv.cz
+       seeder_allowed: "some domain', 'Some IP"
+       seeder_debug: False
+       seeder_sentry: '{{ seeder.sentry }}'
+       wadmin_db_connected: True
+       wa_kat:
+         hostname: kat.webarchiv.cz
+         port: 10001
+       tags: seeder
+```
