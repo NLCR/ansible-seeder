@@ -1,9 +1,9 @@
-- name: Seeder master branch cloned to {{ seeder_home }}
-  git: 
+- name: 'Seeder branch: {{ seeder_version | default("master") }} cloned to {{ seeder_home }}'
+  git:
     repo: "https://github.com/WebArchivCZ/Seeder.git"
     dest: "{{ seeder_home }}"
-    version: "master"
-    update: "yes"
+    version: '{{ seeder_version | default("master") }}'
+    update: yes
   tags: update
   notify: restart uwsgi
 
@@ -11,7 +11,9 @@
 - include: provision.yml
 
 - name: Configuration is present
-  template: src="{{ item.src }}" dest="{{ item.dest }}"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
     - { src: "nginx-seeder.conf.j2", dest: "/etc/nginx/conf.d/seeder.conf" }
     - { src: "nginx-wakat.conf.j2", dest: "/etc/nginx/conf.d/wakat.conf" }
@@ -19,7 +21,7 @@
     - { src: "local_settings.py.j2", dest: "{{ seeder_home }}/Seeder/settings/local_settings.py" }
     - { src: "transifexrc.j2", dest: "{{ seeder_home }}/Seeder/.transifexrc" }
   tags: config
-  notify: 
+  notify:
     - reload nginx
     - reload uwsgi
 
@@ -36,15 +38,15 @@
   lineinfile:
     dest: "/etc/uwsgi.ini"
     line: "logto = {{ seeder_logs }}/uwsgi.log"
-    state: "present"
+    state: present
   tags: config
   notify: restart uwsgi
 
 - name: Directories exist with correct permissions
   file:
     path: "{{ item }}"
-    state: "directory"
-    recurse: "yes"
+    state: directory
+    recurse: yes
     mode: "g+w"
     owner: "{{ seeder_user }}"
     group: "{{ seeder_group }}"
@@ -55,7 +57,7 @@
   tags: permissions, update
 
 - name: "Admins are part of {{ seeder_group }} group"
-  user: 
+  user:
     name: '{{ item.key }}'
     append: yes
     groups: '{{ seeder_group }}'
@@ -125,7 +127,10 @@
   tags: translation
 
 - name: All services running
-  service: name="{{ item }}" state="started" enabled="yes"
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
   with_items:
   - memcached
   - uwsgi
