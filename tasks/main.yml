@@ -18,6 +18,7 @@
     - { src: "uwsgi_seeder.ini.j2", dest: "/etc/uwsgi.d/seeder.ini" }
     - { src: "local_settings.py.j2", dest: "{{ seeder_home }}/Seeder/settings/local_settings.py" }
     - { src: "transifexrc.j2", dest: "{{ seeder_home }}/Seeder/.transifexrc" }
+    - { src: "robots.j2", dest: "/var/www/robots.txt" }
   tags: config
   notify: 
     - reload nginx
