@@ -18,7 +18,7 @@
   - zlib-devel # Seeder: Pillow
   - gcc # Seeder: Pillow
   - libfonts # Manet: Phantom.js dependency
-  - uwsgi 
+  - uwsgi
   - uwsgi-plugin-python
   - uwsgi-plugin-python3
   - python34
@@ -28,12 +28,14 @@
   - memcached
   - policycoreutils-python # SELinux module for Ansible
   tags: packages
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: virtualenv upgraded to latest
   pip:
     name: "virtualenv"
     state: "latest"
   tags: packages
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: requirements.txt satisfied in virtualenv {{ seeder_virtualenv }}
   pip:
@@ -72,7 +74,7 @@
 
 # There is bug in Ansible now
 #- name: seeder wants analysis-icu plugin for elasticsearch
-#  elasticsearch_plugin: 
+#  elasticsearch_plugin:
 #    name: "analysis-icu"
 #    state: "present"
 #  tags: elastic

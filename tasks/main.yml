@@ -6,6 +6,7 @@
     update: yes
   tags: update
   notify: restart uwsgi
+  ignore_errors: "{{ ansible_check_mode }}"
 
 # Provision playbook is too big to fit here.
 - include: provision.yml
