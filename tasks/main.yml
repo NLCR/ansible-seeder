@@ -41,6 +41,7 @@
     state: present
   tags: config
   notify: restart uwsgi
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Directories exist with correct permissions
   file:
@@ -63,6 +64,7 @@
     groups: '{{ seeder_group }}'
   with_dict: '{{ admins }}'
   tags: permissions
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Django manage
   django_manage:
@@ -79,6 +81,7 @@
   - "legacy_sync_screenshots"
   tags: update
   become_user: "{{ seeder_user }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Django add superusers
   django_manage:
