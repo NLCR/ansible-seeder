@@ -75,7 +75,6 @@
   - "migrate"
   - "collectstatic --noinput"
   - "search_blob_initialize"
-  - "compilemessages"
   - "makemessages -a"
   - "crontab add"
   - "legacy_sync_screenshots"
