@@ -17,7 +17,6 @@
     dest: "{{ item.dest }}"
   with_items:
     - { src: "nginx-seeder.conf.j2", dest: "/etc/nginx/conf.d/seeder.conf" }
-    - { src: "nginx-wakat.conf.j2", dest: "/etc/nginx/conf.d/wakat.conf" }
     - { src: "uwsgi_seeder.ini.j2", dest: "/etc/uwsgi.d/seeder.ini" }
     - { src: "local_settings.py.j2", dest: "{{ seeder_home }}/Seeder/settings/local_settings.py" }
   tags: config
