@@ -44,7 +44,7 @@
   notify:
     - reload nginx
     - reload uwsgi
-  when: '{{ seeder_block_robots }}'
+  when: '{{ seeder_block_robots | default("false")  }}'
 
 - name: Tyranny of uwsgi emperor ended
   lineinfile:
