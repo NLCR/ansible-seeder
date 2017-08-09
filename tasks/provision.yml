@@ -38,24 +38,6 @@
   tags: packages
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: requirements.txt satisfied in virtualenv {{ seeder_virtualenv }}
-  pip:
-    requirements: "{{ seeder_home }}/{{ item }}"
-    virtualenv: "{{ seeder_virtualenv }}"
-    state: latest
-    virtualenv_python: python3.4
-  with_items:
-  - requirements.txt
-#  - "requirements_dev.txt"
-  tags: update
-#  environment:
-#    PATH: /opt/rh/rh-python35/root/usr/bin:{{ ansible_env.PATH }}
-#    LD_LIBRARY_PATH: /opt/rh/rh-python35/root/usr/lib64
-#    XDG_DATA_DIRS: /opt/rh/rh-python35/root/usr/share:/usr/local/share:/usr/share
-#    PKG_CONFIG_PATH: /opt/rh/rh-python35/root/usr/lib64/pkgconfig
-#  vars:
-#    ansible_python_interpreter: /opt/rh/rh-python35/root/bin/python3.5
-
 - name: seeder longs for mysqlclient too
   pip:
     name: "{{ item }}"
@@ -65,22 +47,4 @@
   with_items:
   - "mysqlclient"
   tags: packages
-#  environment:
-#    PATH: /opt/rh/rh-python35/root/usr/bin:{{ ansible_env.PATH }}
-#    LD_LIBRARY_PATH: /opt/rh/rh-python35/root/usr/lib64
-#    XDG_DATA_DIRS: /opt/rh/rh-python35/root/usr/share:/usr/local/share:/usr/share
-#    PKG_CONFIG_PATH: /opt/rh/rh-python35/root/usr/lib64/pkgconfig
-#  vars:
-#    ansible_python_interpreter: /opt/rh/rh-python35/root/bin/python3.5
-
-# There is bug in Ansible now
-#- name: seeder wants analysis-icu plugin for elasticsearch
-#  elasticsearch_plugin:
-#    name: "analysis-icu"
-#    state: "present"
-#  tags: elastic
-#  notify: restart elasticsearch
-#
-# WORKAROUND
-#
 ...
