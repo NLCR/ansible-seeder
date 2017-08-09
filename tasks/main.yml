@@ -1,9 +1,10 @@
 - name: Seeder master branch cloned to {{ seeder_home }}
-  git: 
+  git:
     repo: "https://github.com/WebArchivCZ/Seeder.git"
     dest: "{{ seeder_home }}"
     version: "master"
     update: "yes"
+    force: "{{ seeder_force | default('no') }}"
   tags: update
   notify: restart uwsgi
 
@@ -18,9 +19,9 @@
     - { src: "uwsgi_seeder.ini.j2", dest: "/etc/uwsgi.d/seeder.ini" }
     - { src: "local_settings.py.j2", dest: "{{ seeder_home }}/Seeder/settings/local_settings.py" }
     - { src: "transifexrc.j2", dest: "{{ seeder_home }}/Seeder/.transifexrc" }
-    - { src: "robots.j2", dest: "/var/www/robots.txt" }
+    - { src: "robots.j2", dest: "/usr/share/nginx/html/robots.txt" }
   tags: config
-  notify: 
+  notify:
     - reload nginx
     - reload uwsgi
 
@@ -56,7 +57,7 @@
   tags: permissions, update
 
 - name: "Admins are part of {{ seeder_group }} group"
-  user: 
+  user:
     name: '{{ item.key }}'
     append: yes
     groups: '{{ seeder_group }}'
