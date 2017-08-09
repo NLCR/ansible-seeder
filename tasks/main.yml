@@ -1,15 +1,25 @@
+- include: provision.yml
+
 - name: 'Seeder branch: {{ seeder_version | default("master") }} cloned to {{ seeder_home }}'
   git:
     repo: "https://github.com/WebArchivCZ/Seeder.git"
     dest: "{{ seeder_home }}"
     version: '{{ seeder_version | default("master") }}'
     update: yes
+    force: '{{ seeder_force | default("False") }}'
   tags: update
   notify: restart uwsgi
   ignore_errors: "{{ ansible_check_mode }}"
 
-# Provision playbook is too big to fit here.
-- include: provision.yml
+- name: "Seeder's requirements.txt satisfied in virtualenv {{ seeder_virtualenv }}"
+  pip:
+    requirements: "{{ seeder_home }}/{{ item }}"
+    virtualenv: "{{ seeder_virtualenv }}"
+    state: latest
+    virtualenv_python: python3.4
+  with_items:
+  - requirements.txt
+  tags: update
 
 - name: Configuration is present
   template:
