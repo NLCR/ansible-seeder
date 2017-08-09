@@ -9,6 +9,7 @@
     name: "{{ item }}"
     state: "{{ yum_state | default('present') }}"
   with_items:
+  - git # Seeder wants to be cloned
   - python-virtualenv # Seeder
   - python-devel # Seeder: psycopg2
   - postgresql-devel # Seeder: psycopg2
