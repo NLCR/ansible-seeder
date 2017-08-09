@@ -9,11 +9,15 @@ server {
         uwsgi_pass  unix://{{ seeder_home }}/seeder.sock;
         include uwsgi_params;
     }
-    
+
     location /media {
         root {{ seeder_home }}/Seeder;
     }
-    
+
+    location /robots.txt {
+        alias /usr/share/nginx/html/robots.txt;
+    }
+
     location /static {
         alias {{ seeder_home }}/Seeder/static_root;
     }
