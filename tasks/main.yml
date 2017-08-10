@@ -96,7 +96,6 @@
   - "migrate"
   - "collectstatic --noinput"
   - "search_blob_initialize"
-  - "makemessages -a"
   - "crontab add"
   - "legacy_sync_screenshots"
   tags: update
