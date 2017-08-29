@@ -60,6 +60,8 @@ LEGACY_DB_CONNECTED = {{ wadmin_db_connected }}
 MANET_URL = 'http://{{ seeder_manet_host }}/'
 WAKAT_URL = '{{ wakat_url }}'
 
+{% if seeder_sentry is defined %}
 RAVEN_CONFIG = {
     'dsn': '{{ seeder_sentry }}',
 }
+{% endif %}
