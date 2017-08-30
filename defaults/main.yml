@@ -6,6 +6,7 @@ seeder_user: uwsgi
 seeder_group: "{{ seeder_user }}"
 seeder_logs: /var/log/seeder
 seeder_hostname: '{{ ansible_hostname }}'
+seeder_servername: [ '{{ ansible_hostname }}', '{{ ansible_host }}' ]
 
 # local_settings.py
 seeder_secret: sdfvsdfvsdfvsdfv

@@ -1,9 +1,6 @@
 server {
     listen       80;
-    listen       443 ssl;
-    ssl_certificate      /etc/nginx/nginx-{{ seeder_hostname }}.crt;
-    ssl_certificate_key  /etc/nginx/nginx-{{ seeder_hostname }}.key;
-    server_name  {{ seeder_hostname }};
+    server_name  {{ seeder_servername | join(' ') }};
 
     location / {
         uwsgi_pass  unix://{{ seeder_home }}/seeder.sock;
