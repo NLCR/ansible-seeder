@@ -1,14 +1,25 @@
 - name: restart uwsgi
-  service: name="uwsgi" state="started" enabled="yes"
+  service: 
+    name: uwsgi
+    state: started
+    enabled: yes
 
 - name: start uwsgi
-  service: name="uwsgi" state="restarted" enabled="yes"
+  service:
+    name: uwsgi
+    state: restarted
+    enabled: yes
 
 - name: reload uwsgi
-  service: name="uwsgi" state="reloaded"
+  service: 
+    name: uwsgi
+    state: reloaded
 
 - name: restart memcached
-  service: name="memcached" state="restarted" enabled="yes"
+  service: 
+    name: memcached
+    state: restarted
+    enabled: yes
 
 - name: restart nginx
   service:
