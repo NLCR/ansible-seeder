@@ -1,6 +1,6 @@
 server {
     listen       80;
-    server_name  {{ seeder_servername | join(' ') }};
+    server_name  {{ seeder.listen | join(' ') }};
 
     location / {
         uwsgi_pass  unix://{{ seeder_home }}/seeder.sock;

@@ -31,20 +31,9 @@
     - { src: "local_settings.py.j2", dest: "{{ seeder_home }}/Seeder/settings/local_settings.py" }
   tags: config
   notify:
+    - start nginx
     - reload nginx
     - reload uwsgi
-
-- name: Robots.txt implemented
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  with_items:
-    - { src: "robots.j2", dest: "/usr/share/nginx/html/robots.txt" }
-  tags: config
-  notify:
-    - reload nginx
-    - reload uwsgi
-  when: '{{ seeder_block_robots | default("false")  }}'
 
 - name: Tyranny of uwsgi emperor ended
   lineinfile:

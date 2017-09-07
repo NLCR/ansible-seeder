@@ -7,7 +7,7 @@ DEBUG = {{ seeder_debug }}
 TEMPLATE_DEBUG = {{ seeder_template }}
 THUMBNAIL_DEBUG = {{ seeder_thumbnail }}
 
-ALLOWED_HOSTS = [{{ seeder_allowed }}]
+ALLOWED_HOSTS = ['{{ seeder.listen | join("', '") }}']
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

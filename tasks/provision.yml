@@ -24,6 +24,7 @@
   - uwsgi-plugin-python3
   - python34
   - python34-devel
+  - nginx
 #  - rh-python35
   - python-pip
   - memcached
