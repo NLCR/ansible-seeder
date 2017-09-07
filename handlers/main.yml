@@ -1,5 +1,5 @@
 - name: restart uwsgi
-  service: 
+  service:
     name: uwsgi
     state: started
     enabled: yes
@@ -11,22 +11,30 @@
     enabled: yes
 
 - name: reload uwsgi
-  service: 
+  service:
     name: uwsgi
     state: reloaded
 
 - name: restart memcached
-  service: 
+  service:
     name: memcached
     state: restarted
+    enabled: yes
+
+- name: start nginx
+  service:
+    name: nginx
+    state: started
     enabled: yes
 
 - name: restart nginx
   service:
     name: nginx
     state: restarted
+    enabled: yes
 
 - name: reload nginx
   service:
     name: nginx
     state: reloaded
+    enabled: yes
