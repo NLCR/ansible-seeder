@@ -91,6 +91,9 @@
   become_user: "{{ seeder_user }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
+# Workaround about adding superusers
+# https://github.com/ansible/ansible/issues/29786
+# https://gist.github.com/elleryq/9c70e08b1b2cecc636d6
 - name: Django add superusers
   django_manage:
     app_path: "{{ seeder_home }}/Seeder"
