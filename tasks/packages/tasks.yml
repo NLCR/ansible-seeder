@@ -1,0 +1,132 @@
+- include: provision.yml
+
+- name: 'Seeder branch: {{ seeder_version | default("master") }} cloned to {{ seeder_home }}'
+  git:
+    repo: "https://github.com/WebArchivCZ/Seeder.git"
+    dest: "{{ seeder_home }}"
+    version: '{{ seeder_version | default("master") }}'
+    update: yes
+    force: '{{ seeder_force | default("False") }}'
+  tags: update
+  notify: restart uwsgi
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: "Seeder's requirements.txt satisfied in virtualenv {{ seeder_virtualenv }}"
+  pip:
+    requirements: "{{ seeder_home }}/{{ item }}"
+    virtualenv: "{{ seeder_virtualenv }}"
+    state: latest
+    virtualenv_python: python3.4
+  with_items:
+  - requirements.txt
+  tags: update
+
+- name: Configuration is present
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: "nginx-seeder.conf.j2", dest: "/etc/nginx/conf.d/seeder.conf" }
+    - { src: "uwsgi_seeder.ini.j2", dest: "/etc/uwsgi.d/seeder.ini" }
+    - { src: "local_settings.py.j2", dest: "{{ seeder_home }}/Seeder/settings/local_settings.py" }
+  tags: config
+  notify:
+    - start nginx
+    - reload nginx
+    - reload uwsgi
+
+- name: Tyranny of uwsgi emperor ended
+  lineinfile:
+    dest: "/etc/uwsgi.ini"
+    regexp: "^emperor-tyrant = true$"
+    state: "absent"
+    line: "emperor-tyrant = false"
+  tags: config
+  notify: restart uwsgi
+
+- name: Uwsgi is logging to file instead of journald
+  lineinfile:
+    dest: "/etc/uwsgi.ini"
+    line: "logto = {{ seeder_logs }}/uwsgi.log"
+    state: present
+  tags: config
+  notify: restart uwsgi
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Directories exist with correct permissions
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    mode: "g+w"
+    owner: "{{ seeder_user }}"
+    group: "{{ seeder_group }}"
+  with_items:
+  - "{{ seeder_home }}"
+  - "{{ seeder_virtualenv }}"
+  - "{{ seeder_logs }}"
+  tags: permissions, update
+
+- name: "Admins are part of {{ seeder_group }} group"
+  user:
+    name: '{{ item.key }}'
+    append: yes
+    groups: '{{ seeder_group }}'
+  with_dict: '{{ admins }}'
+  tags: permissions
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Django manage
+  django_manage:
+    app_path: "{{ seeder_home }}/Seeder"
+    virtualenv: "{{ seeder_virtualenv }}"
+    command: "{{ item }}"
+  with_items:
+  - "migrate"
+  - "collectstatic --noinput"
+  - "search_blob_initialize"
+  - "compilemessages"
+  - "crontab add"
+  - "legacy_sync_screenshots"
+  tags: update
+  become_user: "{{ seeder_user }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+# Workaround about adding superusers
+# https://github.com/ansible/ansible/issues/29786
+# https://gist.github.com/elleryq/9c70e08b1b2cecc636d6
+- name: Django add superusers
+  django_manage:
+    app_path: "{{ seeder_home }}/Seeder"
+    virtualenv: "{{ seeder_virtualenv }}"
+    command: "createsuperuser --noinput --username={{ item.name }}" # --email={{ item.mail }}" # Not idempotent, probably bug in django_manage module
+  with_items: "{{ admins }}"
+  ignore_errors: yes
+  tags: django,permissions
+  become_user: "{{ seeder_user }}"
+
+- name: SELinux is permissive for httpd_t domain
+  selinux_permissive:
+    domain: httpd_t
+    permissive: True
+  tags: selinux
+
+- name: "uwsgi reloads at 7:45, 12:45, 16:45, 20:45, 23:45"
+  cron:
+    name: uwsgi reloads during day
+    job: "/sbin/service uwsgi reload"
+    hour: "7,12,16,20,23"
+    minute: 45
+  tags: translation
+
+- name: All services running
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+  - memcached
+  - uwsgi
+  - supervisord
+  - nginx
+  tags: services, update
