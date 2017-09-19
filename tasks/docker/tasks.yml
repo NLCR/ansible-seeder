@@ -1,0 +1,33 @@
+- name: docker-compose satisfied
+  yum:
+    name: docker-compose
+    state: present
+
+- name: 'Seeder branch: {{ seeder_version | default("master") }} cloned to {{ seeder_home }}'
+  git:
+    repo: https://github.com/WebArchivCZ/Seeder.git
+    dest: '{{ seeder_home }}'
+    version: '{{ seeder_version | default("master") }}'
+    update: yes
+    force: '{{ seeder_force | default("False") }}'
+  tags: update
+  ignore_errors: '{{ ansible_check_mode }}'
+
+- name: Seeder configured.
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { src: "local_settings.py.j2", dest: "{{ seeder_home }}/Seeder/settings/local_settings.py" }
+  tags: update
+
+- name: Docker image ready.
+  docker_image:
+    name: seeder
+    tag: '{{ seeder_version }}'
+    state: present
+    path: '{{ seeder_home }}'
+  tags: update
+
+- name: Seeder image: {{ seeder_home}}:{{ seeder_version }} is running.
+  docker_
