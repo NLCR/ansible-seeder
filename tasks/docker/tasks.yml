@@ -28,6 +28,3 @@
     state: present
     path: '{{ seeder_home }}'
   tags: update
-
-- name: Seeder image: {{ seeder_home}}:{{ seeder_version }} is running.
-  docker_
