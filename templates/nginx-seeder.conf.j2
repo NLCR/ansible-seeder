@@ -1,6 +1,7 @@
 server {
     listen       80;
     server_name  {{ seeder.listen | join(' ') }};
+    client_max_body_size 8m;
 
     location / {
         uwsgi_pass  unix://{{ seeder_home }}/seeder.sock;
